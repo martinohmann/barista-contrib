@@ -28,3 +28,8 @@ zip 3.0-8 -> 3.0-9
 	require.NoError(t, err)
 	assert.Equal(t, expected, details)
 }
+
+func TestParsePackageDetails_Error(t *testing.T) {
+	_, err := parsePackageDetails([]byte(`invalid`))
+	require.Error(t, err)
+}

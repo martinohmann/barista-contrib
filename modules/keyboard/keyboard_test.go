@@ -127,3 +127,43 @@ func TestModule(t *testing.T) {
 	out = testBar.NextOutput("switch to us")
 	out.AssertText([]string{"keyboard: us"}, "change to us")
 }
+
+func TestModule_NoLayouts(t *testing.T) {
+	testBar.New(t)
+
+	testProvider := &testProvider{
+		layout: "us",
+	}
+
+	m := New(testProvider)
+	testBar.Run(m)
+
+	out := testBar.NextOutput("on start")
+	out.AssertText([]string{"us"})
+
+	oldRateLimiter := RateLimiter
+	defer func() { RateLimiter = oldRateLimiter }()
+	// To speed up the tests.
+	RateLimiter = rate.NewLimiter(rate.Inf, 0)
+
+	out.At(0).Click(bar.Event{Button: bar.ScrollUp})
+	out = testBar.NextOutput("layout stays the same")
+	out.AssertText([]string{"us"}, "no change")
+
+	out.At(0).Click(bar.Event{Button: bar.ScrollDown})
+	out = testBar.NextOutput("layout stays the same")
+	out.AssertText([]string{"us"}, "no change")
+
+	m.Output(func(layout Layout) bar.Output {
+		return outputs.Textf("keyboard: %s", layout.Name).
+			OnClick(func(e bar.Event) {
+				layout.SetLayout("de")
+			})
+	})
+
+	out = testBar.NextOutput("on output format change")
+
+	out.At(0).Click(bar.Event{Button: bar.ButtonRight})
+	m.Refresh()
+	testBar.LatestOutput().AssertText([]string{"keyboard: us"}, "layout de ignored")
+}
