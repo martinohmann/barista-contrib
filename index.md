@@ -18,16 +18,16 @@ go get -u github.com/martinohmann/barista-contrib
 
 Modules available in barista-contrib:
 
-- [dpms](/modules/dpms): Show and toggle Display Power Management Signaling (DPMS) status.
-- [ip](/modules/ip): Shows current public ip in the bar if connected to the internet.
-- [keyboard](/modules/keyboard): Shows and control current keyboard layout.
-- [updates](/modules/updates): Show available package updates.
+- [dpms](modules/dpms): Show and toggle Display Power Management Signaling (DPMS) status.
+- [ip](modules/ip): Shows current public ip in the bar if connected to the internet.
+- [keyboard](modules/keyboard): Shows and control current keyboard layout.
+- [updates](modules/updates): Show available package updates.
 
 # Extensions for built-in modules
 
 The following extensions which provide functionality on top of existing built-in
 modules are available:
 
-- [openweathermap](/modules/weather/openweathermap): Provides convenience
+- [openweathermap](modules/weather/openweathermap): Provides convenience
   functionality to load OpenWeatherMap API key and configuration from a
   configuration file.
