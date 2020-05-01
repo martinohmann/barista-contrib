@@ -8,7 +8,7 @@ the official documentation](https://barista.run).
 
 # Installation
 
-To make use of modules and module providers from pacman-contrib, add it to your `go.mod`:
+To make use of modules and extensions from barista-contrib, add it to your `go.mod`:
 
 ```sh
 go get -u github.com/martinohmann/barista-contrib
