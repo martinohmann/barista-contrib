@@ -37,20 +37,12 @@ The following DPMS providers are available in barista-contrib:
 Show DPMS state an react on click events:
 
 ```go
-func ifLeft(dofn func()) func(bar.Event) {
-	return func(e bar.Event) {
-		if e.Button == bar.ButtonLeft {
-			dofn()
-		}
-	}
-}
-
 xset.New().Output(func(info dpms.Info) bar.Output {
     if info.Enabled {
-        return outputs.Text("dpms: on").OnClick(ifLeft(info.Disable))
+        return outputs.Text("dpms: on").OnClick(click.Left(info.Disable))
     }
 
-    return outputs.Text("dpms: off").OnClick(ifLeft(info.Enable))
+    return outputs.Text("dpms: off").OnClick(click.Left(info.Enable))
 })
 ```
 
