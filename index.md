@@ -31,3 +31,8 @@ modules are available:
 - [openweathermap](modules/weather/openweathermap): Provides convenience
   functionality to load OpenWeatherMap API key and configuration from a
   configuration file.
+
+# Module helpers
+
+There are some helpers available which provide functionality around module
+management. Check out the documentation of the [modules](modules) package.
