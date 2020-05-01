@@ -1,8 +1,8 @@
 ---
 title: barista-contrib
 email: martinohmann@gmail.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Community modules and module providers for barista.
+description: >-
+  Community modules and extensions for barista.
 
 # Build settings
 markdown: kramdown
