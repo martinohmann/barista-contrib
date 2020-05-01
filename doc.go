@@ -1,3 +1,3 @@
-// Package contrib provides community modules and module providers for barista
+// Package contrib provides community modules and extensions for barista
 // (https://barista.run).
 package contrib
