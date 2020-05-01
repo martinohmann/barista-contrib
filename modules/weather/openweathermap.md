@@ -8,7 +8,7 @@ of the built-in [weather module](https://barista.run/modules/weather).
 
 ## Configuration
 
-* `NewFromConfig(string) (openweathermap.Provider)`: Creates a new openweathermap provider from a config file.
+* `NewFromConfig(string) (openweathermap.Provider, error)`: Creates a new openweathermap provider from a config file.
 
 * `New(Config) (openweathermap.Provider, error)`: Creates a new openweathermap provider from config.
 
