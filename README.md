@@ -5,6 +5,8 @@
 ![GitHub](https://img.shields.io/github/license/martinohmann/barista-contrib?color=orange)
 
 Community modules and module providers for [barista](https://barista.run).
+Check out the [barista-contrib docs](https://martinohmann.github.io/barista-contrib/)
+for more information and usage examples.
 
 ## Installation
 
