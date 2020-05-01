@@ -1,0 +1,9 @@
+---
+title: barista-contrib
+email: martinohmann@gmail.com
+description: >- # this means to ignore newlines until "baseurl:"
+  Community modules and module providers for barista.
+
+# Build settings
+markdown: kramdown
+theme: jekyll-theme-hacker

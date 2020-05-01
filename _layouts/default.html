@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-GB" }}">
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1><a href="/">{{ site.title | default: site.github.repository_name }}</a></h1>
+        <h2>{{ site.description | default: site.github.project_tagline }}</h2>
+
+        <section id="downloads">
+          <a href="{{ site.github.repository_url }}" class="btn btn-github"><span class="icon"></span>View barista-contrib on GitHub</a>
+          <a href="https://github.com/soumya92/barista" class="btn btn-github"><span class="icon"></span>View barista on GitHub</a>
+          <a href="https://barista.run" class="btn">View official barista docs</a>
+        </section>
+      </div>
+    </header>
+    <div class="container">
+      <section id="main_content">
+        {% if page.title %}
+          {% if page.pkg == 'none' or page.pkg == 'noimport' %}
+            <h1>{{page.title}}</h1>
+          {% else %}
+            <h1 class="pkg-header">{{page.title}}</h1>
+            {% capture import_path %}{{ page.url | split: "" | reverse | join: "" | replace_first: "lmth.", "" | split: "" | reverse | join: "" }}{% endcapture %}
+            {% if import_path == '/' %}{% assign import_path = '' %}{% endif %}
+            <a class="godoc" href="https://godoc.org/github.com/martinohmann/barista-contrib{{ import_path }}">godoc</a>
+            {% capture import_md %}{% include syntax-highlighted-import.md %}{% endcapture %}
+            {{ import_md | markdownify }}
+          {% endif %}
+        {% endif %}
+        {{ content }}
+      </section>
+    </div>
+  </body>
+</html>
