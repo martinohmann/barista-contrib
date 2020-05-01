@@ -2,7 +2,7 @@
 # About
 
 The barista-contrib project provides [barista](https://barista.run) modules
-that are community maintained an complement or enrich the built-in modules. For
+that are community maintained and complement or enrich the built-in modules. For
 documentation of the built-in barista modules and customization examples [visit
 the official documentation](https://barista.run).
 
@@ -25,7 +25,7 @@ Modules available in barista-contrib:
 
 # Extensions for built-in modules
 
-The following extension which provide functionality on top of existing built-in
+The following extensions which provide functionality on top of existing built-in
 modules are available:
 
 - [openweathermap](/modules/weather/openweathermap): Provides convenience
