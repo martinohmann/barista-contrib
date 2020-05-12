@@ -4,7 +4,9 @@ title: Updates
 
 Show available updates: `updates.New(someProvider)`.
 
-Updates supports displaying currently available updates using pluggable providers, with the ability to add custom providers fairly easily. Provider is just
+Updates supports displaying currently available updates using pluggable
+providers, with the ability to add custom providers fairly easily. Provider is
+just
 
 ```go
 type Provider interface {
@@ -14,7 +16,12 @@ type Provider interface {
 
 The following update providers are available in barista-contrib:
 
-* [pacman](https://godoc.org/github.com/martinohmann/barista-contrib/modules/updates/pacman): Checks for pacman updates using `checkupdates` from [pacman-contrib](https://www.archlinux.org/packages/community/x86_64/pacman-contrib/).
+* [pacman](https://godoc.org/github.com/martinohmann/barista-contrib/modules/updates/pacman):
+  Checks for pacman updates using `checkupdates` from
+* [pacman-contrib](https://www.archlinux.org/packages/community/x86_64/pacman-contrib/).
+
+* [yay](https://godoc.org/github.com/martinohmann/barista-contrib/modules/updates/yay):
+  Checks for Arch Linux updates using [`yay`](https://github.com/Jguer/yay).
 
 ## Configuration
 
@@ -31,7 +38,7 @@ Show updates if available and display package details using
 [beeep](https://github.com/gen2brain/beeep) on left-click:
 
 ```go
-updates.New(pacman.Provider).Output(func(info updates.Info) bar.Output {
+updates.New(yay.New()).Output(func(info updates.Info) bar.Output {
   if info.Updates == 0 {
     return nil
   }
