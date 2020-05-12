@@ -18,7 +18,7 @@ The following update providers are available in barista-contrib:
 
 * [pacman](https://godoc.org/github.com/martinohmann/barista-contrib/modules/updates/pacman):
   Checks for pacman updates using `checkupdates` from
-* [pacman-contrib](https://www.archlinux.org/packages/community/x86_64/pacman-contrib/).
+  [pacman-contrib](https://www.archlinux.org/packages/community/x86_64/pacman-contrib/).
 
 * [yay](https://godoc.org/github.com/martinohmann/barista-contrib/modules/updates/yay):
   Checks for Arch Linux updates using [`yay`](https://github.com/Jguer/yay).
