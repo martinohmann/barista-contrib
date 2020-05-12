@@ -24,12 +24,12 @@ zip 3.0-8 -> 3.0-9
 		{PackageName: "zip", CurrentVersion: "3.0-8", TargetVersion: "3.0-9"},
 	}
 
-	details, err := parsePackageDetails(raw)
+	details, err := ParsePackageDetails(raw)
 	require.NoError(t, err)
 	assert.Equal(t, expected, details)
 }
 
 func TestParsePackageDetails_Error(t *testing.T) {
-	_, err := parsePackageDetails([]byte(`invalid`))
+	_, err := ParsePackageDetails([]byte(`invalid`))
 	require.Error(t, err)
 }

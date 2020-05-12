@@ -30,7 +30,7 @@ var Provider = updates.ProviderFunc(func() (updates.Info, error) {
 		return updates.Info{}, err
 	}
 
-	details, err := parsePackageDetails(out)
+	details, err := ParsePackageDetails(out)
 	if err != nil {
 		return updates.Info{}, err
 	}
@@ -43,7 +43,10 @@ var Provider = updates.ProviderFunc(func() (updates.Info, error) {
 	return info, nil
 })
 
-func parsePackageDetails(raw []byte) (updates.PackageDetails, error) {
+// ParsePackageDetails parses package details from pacman compatible output of
+// the form "packageName currentVersion -> targetVersion" and returns the
+// package details. Returns an error if raw contains malformed lines.
+func ParsePackageDetails(raw []byte) (updates.PackageDetails, error) {
 	scanner := bufio.NewScanner(bytes.NewReader(raw))
 
 	details := updates.PackageDetails{}
