@@ -33,7 +33,7 @@ func TestFakeCommandOutput(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "foo", string(output))
 
-	output, err = CommandOutput("foo", "--error")
+	_, err = CommandOutput("foo", "--error")
 	require.Error(t, err)
 
 	exitError, ok := err.(*ExitError)
@@ -45,7 +45,7 @@ func TestFakeCommandOutput(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "bar", string(output))
 
-	output, err = CommandOutput("foo", "--somearg")
+	_, err = CommandOutput("foo", "--somearg")
 	require.Error(t, err)
 
 	exitError, ok = err.(*ExitError)
