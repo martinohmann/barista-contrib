@@ -7,6 +7,7 @@ import (
 	"barista.run/bar"
 	"barista.run/base/notifier"
 	"barista.run/base/value"
+	"barista.run/base/watchers/netlink"
 	"barista.run/outputs"
 	"barista.run/timing"
 )
@@ -45,6 +46,7 @@ type Module struct {
 	notifyCh   <-chan struct{}
 	notifyFn   func()
 	scheduler  *timing.Scheduler
+	subscriber func() *netlink.Subscription
 }
 
 // New creates a new *Module with the given provider for looking up the ip
@@ -53,8 +55,9 @@ type Module struct {
 // the bar output will also update the module output if not overridden.
 func New(provider Provider) *Module {
 	m := &Module{
-		provider:  provider,
-		scheduler: timing.NewScheduler(),
+		provider:   provider,
+		scheduler:  timing.NewScheduler(),
+		subscriber: netlink.Any,
 	}
 
 	m.notifyFn, m.notifyCh = notifier.New()
@@ -80,8 +83,15 @@ func defaultClickHandler(m *Module) func(bar.Event) {
 
 // Stream implements bar.Module.
 func (m *Module) Stream(s bar.Sink) {
-	ip, err := m.provider.GetIP()
 	outputFunc := m.outputFunc.Get().(func(Info) bar.Output)
+	nextOutputFunc, done := m.outputFunc.Subscribe()
+	defer done()
+
+	linkSub := m.subscriber()
+	defer linkSub.Unsubscribe()
+
+	ip, err := m.provider.GetIP()
+
 	for {
 		if !s.Error(err) {
 			info := Info{
@@ -92,8 +102,12 @@ func (m *Module) Stream(s bar.Sink) {
 		}
 
 		select {
-		case <-m.outputFunc.Next():
+		case <-nextOutputFunc:
 			outputFunc = m.outputFunc.Get().(func(Info) bar.Output)
+		case <-linkSub.C:
+			if link := linkSub.Get(); len(link.IPs) > 0 {
+				ip, err = m.provider.GetIP()
+			}
 		case <-m.notifyCh:
 			ip, err = m.provider.GetIP()
 		case <-m.scheduler.C:
