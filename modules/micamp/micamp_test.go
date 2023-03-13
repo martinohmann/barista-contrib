@@ -66,7 +66,7 @@ func (s *testSampler) amplitude() float64 {
 	return s.currentAmplitude
 }
 
-func Testmodule(t *testing.T) {
+func TestModule(t *testing.T) {
 	testbar.New(t)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
