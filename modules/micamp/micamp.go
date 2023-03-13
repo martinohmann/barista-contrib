@@ -18,12 +18,12 @@ type provider interface {
 }
 
 type Module struct {
-	outputFunc          value.Value
-	ctx                 context.Context
-	scheduler           *timing.Scheduler
-	micSourceNamePrefix string
-	micProvider         provider
-	wavSampler          sampler
+	outputFunc       value.Value
+	ctx              context.Context
+	scheduler        *timing.Scheduler
+	micProvider      provider
+	newMicProviderFn func() (provider, error)
+	wavSampler       sampler
 }
 
 func generatePercentageBar(amp float64) string {
@@ -63,26 +63,30 @@ func generatePercentageBar(amp float64) string {
 	}
 }
 
+var defaultOutputFunc = func(amp float64) bar.Output {
+	if math.IsNaN(amp) {
+		return outputs.Text("NaN .......... 🎙").Color(colors.Hex("#f00"))
+	}
+
+	if amp == float64(0) {
+		return outputs.Text("0%   .......... 🎙").Color(colors.Hex("#ff0"))
+	}
+
+	return outputs.Text(generatePercentageBar(amp))
+}
+
 func New(ctx context.Context, micSourceNamePrefix string) *Module {
 	wavSampler := newWavSampler()
 	m := &Module{
-		ctx:                 ctx,
-		scheduler:           timing.NewScheduler().Every(1 * time.Second),
-		micSourceNamePrefix: micSourceNamePrefix,
-		wavSampler:          wavSampler,
+		ctx:       ctx,
+		scheduler: timing.NewScheduler().Every(1 * time.Second),
+		newMicProviderFn: func() (provider, error) {
+			return newPulseProvider(micSourceNamePrefix, wavSampler)
+		},
+		wavSampler: wavSampler,
 	}
 
-	m.outputFunc.Set(func(amp float64) bar.Output {
-		if math.IsNaN(amp) {
-			return outputs.Text("NaN .......... 🎙").Color(colors.Hex("#f00"))
-		}
-
-		if amp == float64(0) {
-			return outputs.Text("0%   .......... 🎙").Color(colors.Hex("#ff0"))
-		}
-
-		return outputs.Text(generatePercentageBar(amp))
-	})
+	m.outputFunc.Set(defaultOutputFunc)
 
 	return m
 }
@@ -117,7 +121,7 @@ func (m *Module) process(s bar.Sink) {
 	amp := m.wavSampler.amplitude()
 	if amp == float64(0) || math.IsNaN(amp) {
 		m.isProviderReady(true)
-		m.output(s, math.NaN())
+		m.output(s, amp)
 		return
 	}
 
@@ -136,7 +140,7 @@ func (m *Module) isProviderReady(force bool) bool {
 		return true
 	}
 
-	provider, err := newPulseProvider(m.micSourceNamePrefix, m.wavSampler)
+	provider, err := m.newMicProviderFn()
 	if err != nil {
 		m.close()
 		m.micProvider = nil
