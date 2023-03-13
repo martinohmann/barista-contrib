@@ -37,14 +37,16 @@ func (s *wavSampler) Write(p []float32) (int, error) {
 	return len(p), nil
 }
 func (s *wavSampler) amplitude() float64 {
+	buf := []float64{}
+
+	s.mu.Lock()
 	// Note: If we haven't received any updates using Write() for
 	//       2 seconds or more, return Not a Number (NaN).
 	if time.Since(s.lastUpdate) > 2*time.Second {
+		s.mu.Unlock()
 		return math.NaN()
 	}
 
-	buf := []float64{}
-	s.mu.Lock()
 	s.r.Do(func(a interface{}) {
 		if a == nil {
 			return
