@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2023, Simon Gottschlag <simon@gottschlag.se>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
 package micamp
 
 import (
