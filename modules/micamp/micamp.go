@@ -17,7 +17,12 @@ type provider interface {
 	close()
 }
 
-type Module struct {
+type sampler interface {
+	Write(p []float32) (int, error)
+	amplitude() float64
+}
+
+type module struct {
 	outputFunc       value.Value
 	ctx              context.Context
 	scheduler        *timing.Scheduler
@@ -27,14 +32,6 @@ type Module struct {
 }
 
 func generatePercentageBar(amp float64) string {
-	// 0%   .......... 🎙
-	// 2%   .......... 🎙
-	// 12%  :......... 🎙
-	// 22%  ::........ 🎙
-	// ...
-	// 92%  :::::::::. 🎙
-	// 100% :::::::::: 🎙
-
 	switch percentage := int(amp * 100); {
 	case percentage >= 0 && percentage < 10:
 		return fmt.Sprintf("%d%%   .......... 🎙", percentage)
@@ -75,9 +72,37 @@ var defaultOutputFunc = func(amp float64) bar.Output {
 	return outputs.Text(generatePercentageBar(amp))
 }
 
-func New(ctx context.Context, micSourceNamePrefix string) *Module {
+// New creates the microphone amplitude (micamp) module for barista.
+// It is used to give a visual indication that audio is passing
+// through the microphone.
+//
+// Default output will be:
+//
+//   - When the mic is muted or doesn't receive any audio:
+//     NaN .......... 🎙
+//
+//   - When the mic is receiving audio:
+//     0%   .......... 🎙
+//     50%  :::::..... 🎙
+//     100% :::::::::: 🎙
+//
+//   - When the amplitude isn't between 0-100:
+//     ERR 200% (amp=2.000) 🎙
+//
+// Parameters:
+//
+//   - ctx:
+//     context which when done will stop the stream and gracefully
+//     shut down the pulse audio client.
+//
+//   - micSourceNamePrefix:
+//     The prefix of the microphone name as seen by the pulse audio
+//     description (which can be found using `pactl list sources`).
+//     If it's empty (`""`) then the pulse audio default source will
+//     be used.
+func New(ctx context.Context, micSourceNamePrefix string) *module {
 	wavSampler := newWavSampler()
-	m := &Module{
+	m := &module{
 		ctx:       ctx,
 		scheduler: timing.NewScheduler().Every(1 * time.Second),
 		newMicProviderFn: func() (provider, error) {
@@ -91,7 +116,7 @@ func New(ctx context.Context, micSourceNamePrefix string) *Module {
 	return m
 }
 
-func (m *Module) Stream(s bar.Sink) {
+func (m *module) Stream(s bar.Sink) {
 	defer m.close()
 
 	for {
@@ -104,7 +129,7 @@ func (m *Module) Stream(s bar.Sink) {
 	}
 }
 
-func (m *Module) close() {
+func (m *module) close() {
 	if m.micProvider == nil {
 		return
 	}
@@ -112,7 +137,7 @@ func (m *Module) close() {
 	m.micProvider.close()
 }
 
-func (m *Module) process(s bar.Sink) {
+func (m *module) process(s bar.Sink) {
 	if !m.isProviderReady(false) {
 		m.output(s, math.NaN())
 		return
@@ -130,12 +155,12 @@ func (m *Module) process(s bar.Sink) {
 	return
 }
 
-func (m *Module) output(s bar.Sink, amp float64) {
+func (m *module) output(s bar.Sink, amp float64) {
 	format := m.outputFunc.Get().(func(float64) bar.Output)
 	s.Output(format(amp))
 }
 
-func (m *Module) isProviderReady(force bool) bool {
+func (m *module) isProviderReady(force bool) bool {
 	if m.micProvider != nil && !force {
 		return true
 	}

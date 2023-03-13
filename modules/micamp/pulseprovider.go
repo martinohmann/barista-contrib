@@ -7,11 +7,6 @@ import (
 	"github.com/jfreymuth/pulse"
 )
 
-type sampler interface {
-	Write(p []float32) (int, error)
-	amplitude() float64
-}
-
 type pulseProvider struct {
 	pulseClient *pulse.Client
 	pulseStream *pulse.RecordStream

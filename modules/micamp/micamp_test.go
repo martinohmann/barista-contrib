@@ -60,7 +60,7 @@ func (s *testSampler) amplitude() float64 {
 	return s.currentAmplitude
 }
 
-func TestModule(t *testing.T) {
+func Testmodule(t *testing.T) {
 	testbar.New(t)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -72,7 +72,7 @@ func TestModule(t *testing.T) {
 		t:                t,
 		currentAmplitude: 0,
 	}
-	m := &Module{
+	m := &module{
 		ctx:       ctx,
 		scheduler: timing.NewScheduler().Every(5 * time.Millisecond),
 		newMicProviderFn: func() (provider, error) {
