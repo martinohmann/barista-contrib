@@ -74,7 +74,7 @@ func New(ctx context.Context, micSourceName string) *Module {
 
 	m.outputFunc.Set(func(amp float64) bar.Output {
 		if math.IsNaN(amp) {
-			return outputs.Text("NaN  .......... 🎙").Color(colors.Hex("#f00"))
+			return outputs.Text("NaN .......... 🎙").Color(colors.Hex("#f00"))
 		}
 
 		if amp == float64(0) {
