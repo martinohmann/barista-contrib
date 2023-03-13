@@ -16,7 +16,7 @@ type pulseProvider struct {
 }
 
 func newPulseProvider(micSourceName string, wavSampler sampler) (*pulseProvider, error) {
-	pulseClient, err := pulse.NewClient(pulse.ClientApplicationName("simons-status-bar"))
+	pulseClient, err := pulse.NewClient(pulse.ClientApplicationName("barista-micamp"))
 	if err != nil {
 		return nil, err
 	}
