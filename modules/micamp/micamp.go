@@ -18,12 +18,12 @@ type provider interface {
 }
 
 type Module struct {
-	outputFunc    value.Value
-	ctx           context.Context
-	scheduler     *timing.Scheduler
-	micSourceName string
-	micProvider   provider
-	wavSampler    sampler
+	outputFunc          value.Value
+	ctx                 context.Context
+	scheduler           *timing.Scheduler
+	micSourceNamePrefix string
+	micProvider         provider
+	wavSampler          sampler
 }
 
 func generatePercentageBar(amp float64) string {
@@ -63,13 +63,13 @@ func generatePercentageBar(amp float64) string {
 	}
 }
 
-func New(ctx context.Context, micSourceName string) *Module {
+func New(ctx context.Context, micSourceNamePrefix string) *Module {
 	wavSampler := newWavSampler()
 	m := &Module{
-		ctx:           ctx,
-		scheduler:     timing.NewScheduler().Every(1 * time.Second),
-		micSourceName: micSourceName,
-		wavSampler:    wavSampler,
+		ctx:                 ctx,
+		scheduler:           timing.NewScheduler().Every(1 * time.Second),
+		micSourceNamePrefix: micSourceNamePrefix,
+		wavSampler:          wavSampler,
 	}
 
 	m.outputFunc.Set(func(amp float64) bar.Output {
@@ -136,7 +136,7 @@ func (m *Module) isProviderReady(force bool) bool {
 		return true
 	}
 
-	provider, err := newPulseProvider(m.micSourceName, m.wavSampler)
+	provider, err := newPulseProvider(m.micSourceNamePrefix, m.wavSampler)
 	if err != nil {
 		m.close()
 		m.micProvider = nil

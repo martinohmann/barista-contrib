@@ -1,6 +1,9 @@
 package micamp
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/jfreymuth/pulse"
 )
 
@@ -15,13 +18,18 @@ type pulseProvider struct {
 	wavSampler  sampler
 }
 
-func newPulseProvider(micSourceName string, wavSampler sampler) (*pulseProvider, error) {
+func newPulseProvider(micSourceNamePrefix string, wavSampler sampler) (*pulseProvider, error) {
 	pulseClient, err := pulse.NewClient(pulse.ClientApplicationName("barista-micamp"))
 	if err != nil {
 		return nil, err
 	}
 
-	pulseStream, err := pulseClient.NewRecord(pulse.Float32Writer(wavSampler.Write))
+	pulseSource, err := getPulseSource(pulseClient, micSourceNamePrefix)
+	if err != nil {
+		return nil, err
+	}
+
+	pulseStream, err := pulseClient.NewRecord(pulse.Float32Writer(wavSampler.Write), pulse.RecordSource(pulseSource))
 	if err != nil {
 		return nil, err
 	}
@@ -39,4 +47,23 @@ func (p *pulseProvider) close() {
 	p.pulseStream.Stop()
 	p.pulseStream.Close()
 	p.pulseClient.Close()
+}
+
+func getPulseSource(pulseClient *pulse.Client, micSourceNamePrefix string) (*pulse.Source, error) {
+	if micSourceNamePrefix == "" {
+		return pulseClient.DefaultSource()
+	}
+
+	sources, err := pulseClient.ListSources()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, source := range sources {
+		if strings.HasPrefix(source.Name(), micSourceNamePrefix) {
+			return source, nil
+		}
+	}
+
+	return nil, fmt.Errorf("unable to find any source with the prefix %q", micSourceNamePrefix)
 }
