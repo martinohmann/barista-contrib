@@ -21,6 +21,7 @@ Modules available in barista-contrib:
 - [dpms](modules/dpms): Show and toggle Display Power Management Signaling (DPMS) status.
 - [ip](modules/ip): Shows current public ip in the bar if connected to the internet.
 - [keyboard](modules/keyboard): Shows and control current keyboard layout.
+- [micamp](modules/micamp): Show current microphone amplitude.
 - [updates](modules/updates): Show available package updates.
 
 # Extensions for built-in modules
